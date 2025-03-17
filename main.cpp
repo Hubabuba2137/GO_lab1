@@ -7,8 +7,7 @@
 
 #include "go_lib.hpp"
 #include "file_reading.hpp"
-
-using namespace std;
+#include "line_eq.hpp"
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
@@ -18,19 +17,31 @@ int main () {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "GO");
     SetTargetFPS(60);
 
-    string file_name = "input.txt";
-    vector<Node> nodes = read_nodes(file_name);
-    vector<string> vertex_info = load_vertex_info(file_name);
+    Node a(400, 200);
+    Node b(600, 600);
 
-    vector<Vertex> shapes = load_vertexes_from_file(nodes, vertex_info);
+    Line line(a,b);
+
+    Node c(500, 700);
+    Node d(100, 500);
+
+    Segment seg(c,d);
+    std::cout<<is_on_right_of_line(c, line)<<"\n";
+    std::cout<<is_on_right_of_line(d, line)<<"\n";
+
+    Node e(300,400);
+    Node f = flip_node_around_line(e, line);
+    Node g = flip_node_around_segment(e, seg);
 
     while (WindowShouldClose() == false){
         
         BeginDrawing();
             ClearBackground(BLACK);
-            for(Vertex shape: shapes){
-                shape.draw();
-            }
+            line.draw(SCREEN_WIDTH, true);
+            seg.draw();
+            e.draw();
+            f.draw();
+            g.draw();
         EndDrawing();
     }
 
