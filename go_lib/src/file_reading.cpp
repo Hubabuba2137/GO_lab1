@@ -8,15 +8,15 @@
 #include "file_reading.hpp"
 
 
-vector<Node> read_nodes(string filename){
-    fstream plik;
+std::vector<go::Node> go::read_nodes(std::string filename){
+    std::fstream plik;
     plik.open(filename);
 
     if(!plik.good()){
         std::cout<<"Couldn't read a file"<<std::endl;
     }
 
-    vector<Node> nodes;
+    std::vector<Node> nodes;
     std::string temp_line;
     
     while(getline(plik, temp_line)){
@@ -24,7 +24,7 @@ vector<Node> read_nodes(string filename){
             if(temp_line != "*NODES"){
                 //cout<<temp_line<<"\n";
                 std::istringstream iss(temp_line);
-                string temp_id, temp_x, temp_y;
+                std::string temp_id, temp_x, temp_y;
                 iss >> temp_id >> temp_x >> temp_y;
 
                 int id = atoi(temp_id.c_str());
@@ -45,9 +45,9 @@ vector<Node> read_nodes(string filename){
     return nodes;
 }
 
-vector<string> load_vertex_info(string filename){
-    vector<string> vertex_info;
-    fstream plik;
+std::vector<std::string> go::load_vertex_info(std::string filename){
+    std::vector<std::string> vertex_info;
+    std::fstream plik;
     plik.open(filename);
 
     if(!plik.good()){
@@ -66,15 +66,15 @@ vector<string> load_vertex_info(string filename){
     return vertex_info;
 }
 
-vector<Vertex> load_vertexes_from_file(vector<Node> &nodes, vector<string> &vertex_info){
-    vector<Vertex> result;
+std::vector<go::Vertex> load_vertexes_from_file(std::vector<go::Node> &nodes, std::vector<std::string> &vertex_info){
+    std::vector<go::Vertex> result;
 
-    for(string temp_line: vertex_info){
-        vector<int> node_ids;
-        vector<Node> temp_nodes; 
+    for( std::string temp_line: vertex_info){
+        std::vector<int> node_ids;
+        std::vector<go::Node> temp_nodes; 
 
         std::istringstream iss(temp_line);
-        string token;
+        std::string token;
         iss >> token;
 
         if(atoi(token.c_str()) != 0){
@@ -91,7 +91,7 @@ vector<Vertex> load_vertexes_from_file(vector<Node> &nodes, vector<string> &vert
                 //cout<<" y="<<nodes[node_ids[i]-1].pos.y<<"\n";
             }
 
-            Vertex temp_vertex(temp_nodes);
+            go::Vertex temp_vertex(temp_nodes);
             result.push_back(temp_vertex);
         }
     }

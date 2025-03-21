@@ -1,6 +1,4 @@
-﻿# Dokumentacja modułu graficznego
-
-Poniżej znajduje się opis struktur oraz metod zaimplementowanych w module zawierającym funkcjonalności graficzne, które można znaleźć w [go_lib.hpp](d:/Code/Uczelnia/S4/GO/GO_lab01/go_lib.hpp).
+# Dokumentacja modułu graficznego
 
 ---
 
@@ -36,15 +34,15 @@ Reprezentuje odcinek utworzony przez dwa punkty.
 ### Metody
 - `bool solve_seg(float x, float y)` – Sprawdza, czy podane współrzędne (x, y) należą do odcinka.
 - `void draw()` – Rysuje odcinek oraz powiązane punkty.
-- `void move(Vector2)` – Przesuwa cały odcinek o zadany wektor.
+- `void move(Vector2 vec)` – Przesuwa cały odcinek o zadany wektor.
 
 ---
 
 ## Struktura `Line`
 
 Reprezentuje prostą, której równanie może być postaci:
-- y = a*x + b (dla linii nie-pionowych),
-- lub x = c (dla linii pionowych).
+- y = a*x + b (dla linii niepionowych),
+- x = c (dla linii pionowych).
 
 ### Pola
 - **a_coe** (`float`): Współczynnik kierunkowy (nachylenie).
@@ -57,7 +55,7 @@ Reprezentuje prostą, której równanie może być postaci:
 
 ### Metody
 - `void draw(int window_x, bool write_text)` – Rysuje prostą. Jeśli parametr `write_text` jest ustawiony, wyświetla także równanie prostej.
-- `bool solve_equation(float x, float y)` – Sprawdza, czy punkt o zadanych współrzędnych leży na prostej (porównując z równaniem y = a*x + b lub innym odpowiednim równaniem).
+- `bool solve_equation(float x, float y)` – Sprawdza, czy punkt o zadanych współrzędnych leży na prostej zgodnie z równaniem.
 
 ---
 
@@ -75,28 +73,64 @@ Reprezentuje wielokąt utworzony z węzłów oraz krawędzi (odcinków) tworzony
 
 ### Metody
 - `void create_edges()` – Tworzy krawędzie łącząc kolejne węzły. Ostatnia krawędź zamyka wielokąt, łącząc ostatni węzeł z pierwszym.
-- `void draw()` – Rysuje wielokąt (wszystkie krawędzie oraz węzły).
+- `void draw()` – Rysuje wielokąt, w tym wszystkie krawędzie oraz węzły.
 - `void add_vertex(Node node)` – Dodaje nowy węzeł do listy, a następnie aktualizuje krawędzie wielokąta.
 
 ---
 
 ## Funkcje pomocnicze
 
-Te funkcje operują na strukturach zdefiniowanych w module, umożliwiając sprawdzanie położenia punktów względem linii lub odcinków, a także tworzenie odbić punktów.
+Funkcje te operują na strukturach zdefiniowanych w module, umożliwiając:
+- Sprawdzanie, czy punkt leży na odcinku lub prostej.
+- Ustalanie położenia punktu względem prostej.
+- Tworzenie odbić punktu względem prostej lub odcinka.
+
+### Lista funkcji
 
 - `bool is_on_segment(Node node, Segment seg)`  
-  Sprawdza, czy dany węzeł znajduje się na odcinku.
+  Sprawdza, czy dany węzeł znajduje się na zadanym odcinku.
 
 - `bool is_on_line(Node node, Line line)`  
-  Sprawdza, czy dany węzeł leży na prostej (w oparciu o równanie prostej).
+  Sprawdza, czy dany węzeł leży na zadanej prostej, bazując na obliczeniach wg równania linii.
 
 - `bool is_on_right_of_line(Node node, Line line)`  
-  Określa, czy węzeł znajduje się po prawej stronie danej prostej (wykorzystuje iloczyn wektorowy).
+  Określa, czy węzeł znajduje się po prawej stronie danej prostej, wykorzystując iloczyn wektorowy.
 
 - `Node flip_node_around_line(Node node, Line line)`  
-  Zwraca nowy węzeł, będący odbiciem względem zadanej prostej.
+  Zwraca nowy węzeł będący odbiciem oryginalnego węzła względem zadanej prostej.
 
 - `Node flip_node_around_segment(Node node, Segment seg)`  
-  Zwraca nowy węzeł, będący odbiciem względem odcinka. Funkcjonalność ta opiera się na wykorzystaniu funkcji odbicia względem prostej wyznaczonej przez końce odcinka.
+  Zwraca nowy węzeł będący odbiciem oryginalnego węzła względem danego odcinka. Odbicie odbywa się poprzez rzutowanie względem prostej wyznaczonej przez końce odcinka.
 
 ---
+
+## Przykłady użycia
+
+```cpp
+// Przykład wykorzystania struktury Vertex:
+std::vector<Node> nodes = { Node(0, 0), Node(100, 0), Node(100, 100), Node(0, 100) };
+Vertex polygon(nodes);
+polygon.create_edges();
+polygon.draw();
+
+// Dodanie nowego punktu do wielokąta:
+Node new_node(50, 150);
+polygon.add_vertex(new_node);
+polygon.create_edges();
+polygon.draw();
+
+// Przykład użycia funkcji pomocniczych:
+Segment seg(Node(0, 0), Node(100, 0));
+Node test_node(50, 0);
+if (is_on_segment(test_node, seg)) {
+    // ... wykonaj operacje, gdy węzeł leży na odcinku ...
+}
+
+Line line(Node(0, 0), Node(100, 100));
+if (is_on_line(test_node, line)) {
+    // ... wykonaj operacje, gdy węzeł leży na prostej ...
+}
+
+// Tworzenie odbicia punktu względem prostej:
+Node flipped = flip_node_around_line(test_node, line);
+```
