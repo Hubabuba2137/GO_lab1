@@ -9,6 +9,7 @@
 #include "go_lib.hpp"
 #include "file_reading.hpp"
 #include "line_eq.hpp"
+#include "circle_aproxiamtion.hpp"
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
