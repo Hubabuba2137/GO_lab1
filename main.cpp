@@ -1,9 +1,5 @@
 #include <iostream>
-#include <sstream>
 #include <raylib.h>
-#include <vector>
-#include <cmath>
-#include <fstream>
 
 #include "go_lib.hpp"
 
