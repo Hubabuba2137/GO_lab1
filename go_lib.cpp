@@ -72,7 +72,7 @@ void Line::draw(int window_x, bool write_text){
     }
     else{
         start_x = this->start.x;
-        start_y = 100 - window_x;
+        start_y = 100 - window_x; //zakładamy że ekran jest kwadratem
         end_x = start_x;
         end_y = window_x + 100;
     }
@@ -115,11 +115,17 @@ void Vertex::create_edges(){
     std::vector<Segment> temp;
     std::vector<Node> vert = this->vertices;
 
-    vert.push_back(vertices[0]);
     
     for(int i=0; i<vertices.size();i++){
-        Segment temp_line(vert[i], vert[i+1]);
-        temp.push_back(temp_line);
+
+        if(i<vertices.size()-1){
+            Segment temp_line(vert[i], vert[i+1]);
+            temp.push_back(temp_line);
+        }
+        else{
+            Segment temp_line(vert[i], vert[0]);
+            temp.push_back(temp_line);
+        }
     }
 
     this->edges = temp;
@@ -198,4 +204,32 @@ Node flip_node_around_segment(Node node, Segment seg){
     Line temp(seg.tab[0], seg.tab[1]);
 
     return flip_node_around_line(node, temp);
+}
+
+float deg_to_rad(float angle){
+    return (angle*2*3.1415) / 360;
+}
+
+std::vector<Node> circle_aproximation(Node center, float radius, int n_points){
+    std::vector<Node> circle_points;
+    float step = 360/n_points;
+    float angle=0;
+    float clock_hand_x=0;
+    float clock_hand_y=0;
+
+    for(int i=0; i<n_points;i++){
+        clock_hand_x = cos(deg_to_rad(angle))* radius;
+        clock_hand_y = sin(deg_to_rad(angle))* radius;
+        //std::cout<<"("<<clock_hand_x<<", "<<clock_hand_y<<")\n";
+
+        Node temp(clock_hand_x+center.pos.x, clock_hand_y+center.pos.y);
+        circle_points.push_back(temp);
+        angle += step;
+    }
+
+    return circle_points;
+}
+
+Vertex circle_create(Node center, float radius, int n_points){
+    return Vertex(circle_aproximation(center, radius, n_points));
 }

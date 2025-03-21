@@ -2,6 +2,7 @@
 #include <sstream>
 #include <raylib.h>
 #include <vector>
+#include <cmath>
 
 #include <fstream>
 
@@ -32,16 +33,27 @@ int main () {
     Node e(300,400);
     Node f = flip_node_around_line(e, line);
     Node g = flip_node_around_segment(e, seg);
+    
+
+    Node center(150,150);
+    float radius = 100;
+    Vertex circle = circle_create(center, radius, 5);
 
     while (WindowShouldClose() == false){
         
         BeginDrawing();
             ClearBackground(BLACK);
             line.draw(SCREEN_WIDTH, true);
+            a.draw();
+            b.draw();
             seg.draw();
             e.draw();
             f.draw();
             g.draw();
+
+            DrawCircleLines(center.pos.x, center.pos.y, radius, BLUE);
+            circle.draw();
+
         EndDrawing();
     }
 

@@ -54,3 +54,7 @@ bool is_on_right_of_line(Node node, Line line);
 
 Node flip_node_around_line(Node node, Line line);
 Node flip_node_around_segment(Node node, Segment seg);
+
+float deg_to_rad(float angle);
+std::vector<Node> circle_aproximation(Node center, float radius, int n_points);
+Vertex circle_create(Node center, float radius, int n_points);
