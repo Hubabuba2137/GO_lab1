@@ -1,6 +1,34 @@
-# Dokumentacja modułu graficznego
+# Dokumentacja projektu GO
 
----
+Projekt ten wykorzystuje bibliotekę [raylib](https://www.raylib.com/) do tworzenia graficznych aplikacji w C++. W projekcie zdefiniowane są struktury i funkcje umożliwiające operacje geometryczne, takie jak rysowanie punktów, linii, odcinków, wielokątów oraz aproksymację kształtów.
+
+## Struktura projektu
+
+- **Główne pliki źródłowe:**
+  - [`main.cpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\main.cpp) – zawiera funkcję `main()`, która inicjalizuje okno, tworzy obiekty oraz realizuje główną pętlę rysowania.
+  
+- **Folder go_lib:**
+  - Pliki nagłówkowe znajdują się w folderze [go_lib](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib):
+    - [`go_node.hpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_node.hpp) – definiuje strukturę [`go::Node`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_node.hpp) reprezentującą punkt na płaszczyźnie.
+    - [`go_segment.hpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_segment.hpp) – definiuje strukturę [`go::Segment`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_segment.hpp) reprezentującą odcinek między dwoma punktami.
+    - [`go_line.hpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_line.hpp) – definiuje strukturę [`go::Line`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_line.hpp), która oblicza równanie prostej na podstawie dwóch węzłów.
+    - [`go_vertex.hpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_vertex.hpp) – definiuje strukturę [`go::Vertex`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_vertex.hpp) tworzącą wielokąt z węzłów oraz krawędzi (odcinków).
+    - [`circle_aproxiamtion.hpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/circle_aproxiamtion.hpp) – zawiera funkcje do aproksymacji koła przy użyciu punktów oraz tworzenia wielokąta kołowego.
+    - [`file_reading.hpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/file_reading.hpp) – deklaruje funkcje do wczytywania danych (węzłów i informacji o elementach) z pliku tekstowego.
+
+  - Główne funkcje pomocnicze umieszczone są w [`go_lib.hpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib.hpp) – eksportuje funkcje takie jak:
+    - `is_on_segment` – sprawdza, czy dany węzeł leży na odcinku.
+    - `is_on_line` – sprawdza, czy punkt leży na prostej.
+    - `is_on_right_of_line` – określa, czy węzeł znajduje się po prawej stronie prostej.
+    - `flip_node_around_line` i `flip_node_around_segment` – tworzą odbicia punktu względem prostej lub odcinka.
+
+- **Folder src (w folderze go_lib):**
+  - [`go_node.cpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/src/go_node.cpp) – implementacja metod struktury [`go::Node`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_node.hpp).
+  - [`go_segment.cpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/src/go_segment.cpp) – implementacja metod struktury [`go::Segment`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_segment.hpp).
+  - [`go_line.cpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/src/go_line.cpp) – implementacja metod struktury [`go::Line`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_line.hpp).
+  - [`go_vertex.cpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/src/go_vertex.cpp) – implementacja metod struktury [`go::Vertex`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_vertex.hpp).
+  - [`circle_aproximation.cpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/src/circle_aproximation.cpp) – realizuje funkcje aproksymujące koło, m.in. `circle_aproximation` oraz `circle_create`.
+  - [`file_reading.cpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/src/file_reading.cpp) – zawiera implementacje funkcji do wczytywania z plików tekstowych, takich jak `read_nodes` oraz `load_vertex_info`.
 
 ## Struktura `Node`
 
@@ -106,6 +134,12 @@ Funkcje te operują na strukturach zdefiniowanych w module, umożliwiając:
 
 ## Przykłady użycia
 
+W [`main.cpp`](d:\Code\Uczelnia\S4\GO\GO_lab01\main.cpp) prezentowany jest przykładowy scenariusz użycia:
+- Inicjalizacja okna przy użyciu raylib.
+- Tworzenie obiektów takich jak: węzły ([`go::Node`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_node.hpp)), linia ([`go::Line`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_line.hpp)), odcinek ([`go::Segment`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_segment.hpp)) oraz wielokąt ([`go::Vertex`](d:\Code\Uczelnia\S4\GO\GO_lab01\go_lib/go_vertex.hpp)).
+- Demonstracja funkcji pomocniczych, np. sprawdzanie, czy punkt znajduje się po prawej stronie prostej, oraz operacje odbicia punktu względem linii lub odcinka.
+- Aproksymacja koła poprzez generowanie punktów na obrzeżu i tworzenie wielokąta.
+
 ```cpp
 // Przykład wykorzystania struktury Vertex:
 std::vector<Node> nodes = { Node(0, 0), Node(100, 0), Node(100, 100), Node(0, 100) };
@@ -133,4 +167,12 @@ if (is_on_line(test_node, line)) {
 
 // Tworzenie odbicia punktu względem prostej:
 Node flipped = flip_node_around_line(test_node, line);
+```
+
+## Budowanie projektu
+
+Projekt wykorzystuje [Makefile](d:\Code\Uczelnia\S4\GO\GO_lab01\Makefile) który zawiera konfigurację kompilatora oraz ustawienia specyficzne dla platform (np. Windows, Linux, OSX). Aby zbudować projekt:
+
+```sh
+npm run build
 ```
