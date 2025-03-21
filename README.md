@@ -168,11 +168,3 @@ if (is_on_line(test_node, line)) {
 // Tworzenie odbicia punktu względem prostej:
 Node flipped = flip_node_around_line(test_node, line);
 ```
-
-## Budowanie projektu
-
-Projekt wykorzystuje [Makefile](d:\Code\Uczelnia\S4\GO\GO_lab01\Makefile) który zawiera konfigurację kompilatora oraz ustawienia specyficzne dla platform (np. Windows, Linux, OSX). Aby zbudować projekt:
-
-```sh
-npm run build
-```
