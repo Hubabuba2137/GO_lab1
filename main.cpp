@@ -19,7 +19,7 @@ int main () {
 
     //creating shape
     go::Node c(300, 400);
-    go::Vertex shape = go::circle_create(c, 100, 6);
+    go::Vertex shape = go::circle_create(c, 100, 5);
     int n=0;
     //basic approach time
     
@@ -47,7 +47,7 @@ int main () {
     }
     std::chrono::steady_clock::time_point end_2 = std::chrono::steady_clock::now();
 
-    std::cout << "Basic approach time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end_2 - begin_2).count() << "[ms]" << std::endl;
+    std::cout << "Improved basic approach time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end_2 - begin_2).count() << "[ms]" << std::endl;
     std::cout<<"Number of nodes inside shape = "<<n<<"\n";
     
     while (WindowShouldClose() == false){
