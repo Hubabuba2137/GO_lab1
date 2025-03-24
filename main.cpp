@@ -29,8 +29,11 @@ int main () {
     
 
     go::Node center(150,150);
+    
     float radius = 100;
     go::Vertex circle = go::circle_create(center, radius, 5);
+
+    //seg.move((Vector2){200,0});
 
     while (WindowShouldClose() == false){
         

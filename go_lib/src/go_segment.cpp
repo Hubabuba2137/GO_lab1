@@ -21,8 +21,8 @@ namespace go{
     
     void Segment::move(Vector2 vec){
         this->tab[0].pos.x+=vec.x;
-        this->tab[0].pos.x+=vec.y;
+        this->tab[0].pos.y+=vec.y;
         this->tab[1].pos.x+=vec.x;
-        this->tab[1].pos.x+=vec.y;
+        this->tab[1].pos.y+=vec.y;
     }
 }
