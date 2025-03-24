@@ -109,7 +109,7 @@ namespace go{
         return angle;
     }
 
-    bool ray_intersects_segment(const Node &point, const Segment &seg) {
+    bool ray_intersects_segment(Node point, Segment seg) {
         float x = point.pos.x, y = point.pos.y;
         float x1 = seg.tab[0].pos.x, y1 = seg.tab[0].pos.y;
         float x2 = seg.tab[1].pos.x, y2 = seg.tab[1].pos.y;
@@ -121,4 +121,68 @@ namespace go{
         }
         return false;
     }
+    /*
+    bool is_convex(Node a, Node b, Node c) {
+        float v1x = b.pos.x - a.pos.x;
+        float v1y = b.pos.y - a.pos.y;
+        float v2x = c.pos.x - b.pos.x;
+        float v2y = c.pos.y - b.pos.y;
+    
+        float cross = v1x * v2y - v1y * v2x;
+        float epsilon = 1e-6;
+        return cross > epsilon;
+    }
+
+    bool no_other_node_in_trian(Vertex trian, std::vector<Node>& vert) {
+        for (Node& it : vert) {
+            if (&it == &trian.vertices[0] || &it == &trian.vertices[1] || &it == &trian.vertices[2]) {
+                continue;
+            }
+            if (is_node_inside_trian(trian, it)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    std::vector<Vertex> ear_cut(Vertex shape) {
+        std::vector<Vertex> triangles;
+        std::vector<Node> vertices = shape.vertices;
+    
+        if (vertices.size() < 3) {
+            std::cerr << "Polygon must have at least 3 vertices!" << std::endl;
+            return triangles;
+        }
+    
+        while (vertices.size() > 3) {
+            bool earFound = false;
+            for (int i = 0; i < vertices.size(); i++) {
+                Node prev = vertices[(i - 1 + vertices.size()) % vertices.size()];
+                Node curr = vertices[i];
+                Node next = vertices[(i + 1) % vertices.size()];
+    
+                if (is_convex(prev, curr, next)) {
+                    std::vector<Node> trian_nodes = {prev, curr, next};
+                    Vertex trian(trian_nodes);
+    
+                    if (no_other_node_in_trian(trian, vertices)) {
+                        triangles.push_back(trian);
+                        vertices.erase(vertices.begin() + i);
+                        earFound = true;
+                        break;
+                    }
+                }
+            }
+            if (!earFound) {
+                std::cerr << "Failed to find an ear. Check if the polygon is valid!" << std::endl;
+                return triangles;
+            }
+        }
+    
+        std::vector<Node> last_trian = {vertices[0], vertices[1], vertices[2]};
+        Vertex last(last_trian);
+        triangles.push_back(last);
+    
+        return triangles;
+    }*/
 }

@@ -22,5 +22,11 @@ namespace go{
     float angle(const Segment &seg1, const Segment &seg2);
     bool is_node_inside(Vertex vert, Node node);
     bool is_node_inside_trian(Vertex vert, Node node);
-    bool ray_intersects_segment(const Node &point, const Segment &seg);
+    bool ray_intersects_segment(Node point, Segment seg);
+
+    /*
+    bool is_convex(Node a, Node b, Node c);
+    bool no_other_node_in_trian(Vertex trian, std::vector<Node> &vert);
+    std::vector<Vertex> ear_cut(Vertex shape);
+    */
 }

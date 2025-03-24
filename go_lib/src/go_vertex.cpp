@@ -3,15 +3,31 @@
 #include <algorithm>
 #include <string>
 #include <cmath>
+#include <limits>
 
 #include "go_vertex.hpp"
 #include "go_node.hpp"
 #include "go_segment.hpp"
 
 namespace go{
-    Vertex::Vertex(std::vector<Node> nodes){
+    Vertex::Vertex(std::vector<Node> nodes) {
+        // Calculate the centroid of the nodes
+        float centroidX = 0.0f, centroidY = 0.0f;
+        for (const auto& node : nodes) {
+            centroidX += node.pos.x;
+            centroidY += node.pos.y;
+        }
+        centroidX /= nodes.size();
+        centroidY /= nodes.size();
+
+        // Sort nodes based on their polar angle relative to the centroid
+        std::sort(nodes.begin(), nodes.end(), [centroidX, centroidY](const Node& a, const Node& b) {
+            float angleA = atan2(a.pos.y - centroidY, a.pos.x - centroidX);
+            float angleB = atan2(b.pos.y - centroidY, b.pos.x - centroidX);
+            return angleA < angleB;
+        });
+
         vertices = nodes;
-    
         create_edges();
     }
     
@@ -60,5 +76,20 @@ namespace go{
         }
     }
 
+    std::vector<float> Vertex::get_bounds() {
+        float min_x = std::numeric_limits<float>::max();
+        float max_x = std::numeric_limits<float>::lowest();
+        float min_y = std::numeric_limits<float>::max();
+        float max_y = std::numeric_limits<float>::lowest();
+    
+        for (const auto& node : this->vertices) { // Assuming shape.get_nodes() returns a vector of go::Node
+            min_x = std::min(min_x, node.pos.x);
+            max_x = std::max(max_x, node.pos.x);
+            min_y = std::min(min_y, node.pos.y);
+            max_y = std::max(max_y, node.pos.y);
+        }
+    
+        return {min_x, max_x, min_y, max_y};
+    }
     
 }

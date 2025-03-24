@@ -17,5 +17,6 @@ namespace go{
         void add_vertex(Node node);
         
         float area();
+        std::vector<float> get_bounds();
     };
 }
