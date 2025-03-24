@@ -7,6 +7,7 @@
 #include "go_lib/go_segment.hpp"
 #include "go_lib/go_vertex.hpp"
 
+#include "go_lib/file_reading.hpp"
 #include "go_lib/circle_aproxiamtion.hpp"
 #include "go_lib/intersect.hpp"
 

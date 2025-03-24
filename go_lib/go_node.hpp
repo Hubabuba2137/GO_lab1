@@ -5,7 +5,7 @@
 namespace go{
     struct Node{
         Vector2 pos;
-        float radius = 5.0;
+        float radius = 2.0;
 
         Node(float x_in, float y_in);
         Node(Vector2 pos_in);

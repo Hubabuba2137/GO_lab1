@@ -3,97 +3,126 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
+#include <ctime>
 
 #include "go_lib.hpp"
 #include "file_reading.hpp"
 
+namespace go{
+    std::vector<Node> read_nodes(std::string filename){
+        std::fstream plik;
+        plik.open(filename);
 
-std::vector<go::Node> go::read_nodes(std::string filename){
-    std::fstream plik;
-    plik.open(filename);
+        if(!plik.good()){
+            std::cout<<"Couldn't read a file"<<std::endl;
+        }
 
-    if(!plik.good()){
-        std::cout<<"Couldn't read a file"<<std::endl;
-    }
+        std::vector<Node> nodes;
+        std::string temp_line;
+        
+        while(getline(plik, temp_line)){
+            if(temp_line != "*ELEMENTS"){
+                if(temp_line != "*NODES"){
+                    //cout<<temp_line<<"\n";
+                    std::istringstream iss(temp_line);
+                    std::string temp_id, temp_x, temp_y;
+                    iss >> temp_id >> temp_x >> temp_y;
 
-    std::vector<Node> nodes;
-    std::string temp_line;
-    
-    while(getline(plik, temp_line)){
-        if(temp_line != "*ELEMENTS"){
-            if(temp_line != "*NODES"){
-                //cout<<temp_line<<"\n";
-                std::istringstream iss(temp_line);
-                std::string temp_id, temp_x, temp_y;
-                iss >> temp_id >> temp_x >> temp_y;
+                    int id = atoi(temp_id.c_str());
+                    float x = atoi(temp_x.c_str());
+                    float y = atoi(temp_y.c_str());
 
-                int id = atoi(temp_id.c_str());
-                float x = atoi(temp_x.c_str());
-                float y = atoi(temp_y.c_str());
-
-                if(id != 0){
-                    Node temp_node((Vector2){x,y});
-                    nodes.push_back(temp_node);
+                    if(id != 0){
+                        Node temp_node((Vector2){x,y});
+                        nodes.push_back(temp_node);
+                    }
                 }
             }
-        }
-        else{
-            break;
-        }
-    }
-
-    return nodes;
-}
-
-std::vector<std::string> go::load_vertex_info(std::string filename){
-    std::vector<std::string> vertex_info;
-    std::fstream plik;
-    plik.open(filename);
-
-    if(!plik.good()){
-        std::cout<<"Couldn't read a file"<<std::endl;
-    }
-
-    std::string temp_line;
-    
-    while(temp_line!="*ELEMENTS"){
-        plik>>temp_line;
-    }
-    while(getline(plik, temp_line)){
-        vertex_info.push_back(temp_line);
-    }
-
-    return vertex_info;
-}
-
-std::vector<go::Vertex> load_vertexes_from_file(std::vector<go::Node> &nodes, std::vector<std::string> &vertex_info){
-    std::vector<go::Vertex> result;
-
-    for( std::string temp_line: vertex_info){
-        std::vector<int> node_ids;
-        std::vector<go::Node> temp_nodes; 
-
-        std::istringstream iss(temp_line);
-        std::string token;
-        iss >> token;
-
-        if(atoi(token.c_str()) != 0){
-
-            while (iss >> token) {
-                int id_temp = atoi(token.c_str());
-                node_ids.push_back(id_temp);
+            else{
+                break;
             }
-
-            for(int i = 0; i < node_ids.size(); i++){
-                temp_nodes.push_back(nodes[node_ids[i]-1]);
-                
-                //cout<<"\t"<<node_ids[i]<<": x="<<nodes[node_ids[i]-1].pos.x;
-                //cout<<" y="<<nodes[node_ids[i]-1].pos.y<<"\n";
-            }
-
-            go::Vertex temp_vertex(temp_nodes);
-            result.push_back(temp_vertex);
         }
+
+        return nodes;
     }
-    return result;
+
+    std::vector<std::string> load_vertex_info(std::string filename){
+        std::vector<std::string> vertex_info;
+        std::fstream plik;
+        plik.open(filename);
+
+        if(!plik.good()){
+            std::cout<<"Couldn't read a file"<<std::endl;
+        }
+
+        std::string temp_line;
+        
+        while(temp_line!="*ELEMENTS"){
+            plik>>temp_line;
+        }
+        while(getline(plik, temp_line)){
+            vertex_info.push_back(temp_line);
+        }
+
+        return vertex_info;
+    }
+
+    std::vector<go::Vertex> load_vertexes_from_file(std::vector<go::Node> &nodes, std::vector<std::string> &vertex_info){
+        std::vector<go::Vertex> result;
+
+        for( std::string temp_line: vertex_info){
+            std::vector<int> node_ids;
+            std::vector<go::Node> temp_nodes; 
+
+            std::istringstream iss(temp_line);
+            std::string token;
+            iss >> token;
+
+            if(atoi(token.c_str()) != 0){
+
+                while (iss >> token) {
+                    int id_temp = atoi(token.c_str());
+                    node_ids.push_back(id_temp);
+                }
+
+                for(int i = 0; i < node_ids.size(); i++){
+                    temp_nodes.push_back(nodes[node_ids[i]-1]);
+                    
+                    //cout<<"\t"<<node_ids[i]<<": x="<<nodes[node_ids[i]-1].pos.x;
+                    //cout<<" y="<<nodes[node_ids[i]-1].pos.y<<"\n";
+                }
+
+                go::Vertex temp_vertex(temp_nodes);
+                result.push_back(temp_vertex);
+            }
+        }
+        return result;
+    }
+
+    void create_nodes(int n, std::string filepath, std::string filename) {
+        std::string full_path = filepath + "\\" + filename;
+        std::ofstream file(full_path);
+
+        if (!file.is_open()) {
+            std::cout << "Failed to create the file: " << full_path << std::endl;
+            return;
+        }
+
+        // Seed the random number generator
+        std::srand(std::time(nullptr));
+
+        // Write the *NODES header
+        file << "*NODES" << std::endl;
+
+        // Generate and write n nodes
+        for (int i = 1; i <= n; ++i) {
+            int x = std::rand() % 801; // Random x coordinate (0-800)
+            int y = std::rand() % 801; // Random y coordinate (0-800)
+            file << i << " " << x << " " << y << std::endl;
+        }
+
+        file.close();
+        std::cout << "File created successfully: " << full_path << std::endl;
+    }
 }
