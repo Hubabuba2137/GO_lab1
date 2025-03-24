@@ -29,29 +29,14 @@ namespace go{
         Node b = vert.vertices[1];
         Node c = vert.vertices[2];
     
-        Segment a_b(a, b);
-        Segment b_c(b, c);
-        Segment c_a(c, a);
+        Vector2 p = node.pos;
     
-        if (is_on_segment(node, a_b) || is_on_segment(node, b_c) || is_on_segment(node, c_a)) {
-            return true;
-        }
+        float cross1 = (b.pos.x - a.pos.x) * (p.y - a.pos.y) - (b.pos.y - a.pos.y) * (p.x - a.pos.x);
+        float cross2 = (c.pos.x - b.pos.x) * (p.y - b.pos.y) - (c.pos.y - b.pos.y) * (p.x - b.pos.x);
+        float cross3 = (a.pos.x - c.pos.x) * (p.y - c.pos.y) - (a.pos.y - c.pos.y) * (p.x - c.pos.x);
     
-        Segment a_n(a, node);
-        Segment b_n(b, node);
-        Segment c_n(c, node);
-    
-        float alfa = angle(a_n, b_n);
-        float beta = angle(b_n, c_n);
-        float sigma = angle(c_n, a_n);
-    
-        float epsilon = 0.01f;
-    
-        if (fabs(alfa + beta + sigma - 2 * PI) < epsilon) {
-            return true;
-        } else {
-            return false;
-        }
+        bool has_same_sign = (cross1 >= 0 && cross2 >= 0 && cross3 >= 0) || (cross1 <= 0 && cross2 <= 0 && cross3 <= 0);
+        return has_same_sign;
     }
 
     float cross(const Vector2& a, const Vector2& b, const Vector2& c) {
@@ -59,7 +44,7 @@ namespace go{
     }
 
     bool is_convex(const Vector2& prev, const Vector2& curr, const Vector2& next) {
-        return cross(prev, curr, next) > 0; // zakładamy CCW (counter-clockwise)
+        return cross(prev, curr, next) > 0; 
     }
 
 
@@ -108,7 +93,6 @@ namespace go{
             }
 
             if (!ear_found) {
-                // Wielokąt nie jest prosty lub coś poszło nie tak
                 break;
             }
         }
@@ -118,5 +102,45 @@ namespace go{
         }
 
         return triangles;
+    }
+
+    int calc_nodes_inside(const std::vector<Node> &nodes, Vertex shape, std::vector<Node> *inside_nodes) {
+        int n = 0;
+        std::vector<Vertex> triangulation = ear_cut_triangulation(shape);
+
+        float min_x = shape.get_bounds()[0];
+        float max_x = shape.get_bounds()[1];
+        float min_y = shape.get_bounds()[2];
+        float max_y = shape.get_bounds()[3];
+
+        for (const Node &it : nodes) {
+            if (it.pos.x < min_x || it.pos.x > max_x || it.pos.y < min_y || it.pos.y > max_y) {
+                continue;
+            }
+
+            bool is_inside = false;
+            for (Vertex &trian : triangulation) {
+                float min_x_t = trian.get_bounds()[0];
+                float max_x_t = trian.get_bounds()[1];
+                float min_y_t = trian.get_bounds()[2];
+                float max_y_t = trian.get_bounds()[3];
+
+                if (it.pos.x < min_x_t || it.pos.x > max_x_t || it.pos.y < min_y_t || it.pos.y > max_y_t) {
+                    continue;
+                }
+
+                if (is_node_inside_trian(trian, it)) {
+                    is_inside = true;
+                    inside_nodes->push_back(it);
+                    break;
+                }
+            }
+
+            if (is_inside) {
+                ++n;
+            }
+        }
+
+        return n;
     }
 }

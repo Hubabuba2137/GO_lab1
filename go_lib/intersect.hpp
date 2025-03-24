@@ -14,4 +14,5 @@ namespace go
     bool is_convex(const Vector2& prev, const Vector2& curr, const Vector2& next);
     bool is_ear(const std::vector<Node>& poly, int i);
     std::vector<Vertex> ear_cut_triangulation(const Vertex& polygon);
+    int calc_nodes_inside(const std::vector<Node> &nodes, Vertex shape, std::vector<Node> *inside_nodes);
 } // namespace go

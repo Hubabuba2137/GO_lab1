@@ -82,7 +82,7 @@ namespace go{
         float min_y = std::numeric_limits<float>::max();
         float max_y = std::numeric_limits<float>::lowest();
     
-        for (const auto& node : this->vertices) { // Assuming shape.get_nodes() returns a vector of go::Node
+        for (const auto& node : this->vertices) { 
             min_x = std::min(min_x, node.pos.x);
             max_x = std::max(max_x, node.pos.x);
             min_y = std::min(min_y, node.pos.y);
