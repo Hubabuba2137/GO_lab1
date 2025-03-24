@@ -8,6 +8,7 @@
 #include "go_lib/go_vertex.hpp"
 
 #include "go_lib/circle_aproxiamtion.hpp"
+#include "go_lib/intersect.hpp"
 
 namespace go{
     bool is_on_segment(Node node, Segment seg);
@@ -20,4 +21,5 @@ namespace go{
     float angle(const Segment &seg1, const Segment &seg2);
     bool is_node_inside(Vertex vert, Node node);
     bool is_node_inside_trian(Vertex vert, Node node);
+    bool ray_intersects_segment(const Node &point, const Segment &seg);
 }
