@@ -13,5 +13,7 @@ namespace go{
         void draw();
     
         void move(Vector2);
+
+        float len();
     };
 }

@@ -25,4 +25,10 @@ namespace go{
         this->tab[1].pos.x+=vec.x;
         this->tab[1].pos.y+=vec.y;
     }
+
+    float Segment::len(){
+        float dx = tab[1].pos.x - tab[0].pos.x;
+        float dy = tab[1].pos.y - tab[0].pos.y;
+        return sqrt(dx * dx + dy * dy);
+    }
 }

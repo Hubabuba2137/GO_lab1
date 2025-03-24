@@ -15,6 +15,7 @@ namespace go{
         void create_edges();
         void draw();
         void add_vertex(Node node);
-    
+        
+        float area();
     };
 }

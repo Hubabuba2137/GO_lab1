@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-#include <math.h>
+#include <cmath>
 
 #include "go_vertex.hpp"
 #include "go_node.hpp"
@@ -49,4 +49,16 @@ namespace go{
         vertices.push_back(node);
         create_edges();
     }
+
+    float Vertex::area(){
+        if(this->edges.size() == 3 && this->edges.size()==3){
+            float p = (this->edges[0].len()+this->edges[1].len()+this->edges[2].len())/2;
+            return sqrt(p*(p - this->edges[0].len())*(p - this->edges[1].len())*p - this->edges[2].len());
+        }
+        else{
+            return 0;
+        }
+    }
+
+    
 }

@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -26,6 +27,25 @@ namespace go{
     
     bool is_on_line(Node node, Line line){
         return line.solve_equation(node.pos.x, node.pos.y);
+    }
+
+    bool line_segment_intersection(Line line, Segment seg){
+        if(is_on_line(seg.tab[0], line) || is_on_line(seg.tab[1], line)){
+            return true;
+        }
+
+        float d1, d2;
+        if(line.start.x == line.end.x){
+            d1 = seg.tab[0].pos.x - line.start.x;
+            d2 = seg.tab[1].pos.x - line.start.x;
+        }
+        else{
+            d1 = seg.tab[0].pos.y - (line.a_coe * seg.tab[0].pos.x + line.b_coe);
+            d2 = seg.tab[1].pos.y - (line.a_coe * seg.tab[1].pos.x + line.b_coe);
+        }
+
+        // jeżeli < 0 to przecina linie, jeżeli > 0 to nie
+        return (d1 * d2 < 0);
     }
     
     bool is_on_right_of_line(Node node, Line line) {
@@ -69,5 +89,77 @@ namespace go{
         Line temp(seg.tab[0], seg.tab[1]);
     
         return flip_node_around_line(node, temp);
+    }
+    float angle(const Segment &seg1, const Segment &seg2) {
+        // Calculate direction vectors assuming `start` and `end` members in Segment.
+        Vector2 v1 = { seg1.tab[1].pos.x - seg1.tab[0].pos.x, seg1.tab[1].pos.y - seg1.tab[0].pos.y };
+        Vector2 v2 = { seg2.tab[1].pos.x - seg2.tab[0].pos.x, seg2.tab[1].pos.y - seg2.tab[0].pos.y };
+    
+        float dot = v1.x * v2.x + v1.y * v2.y;
+        float len1 = sqrt(v1.x * v1.x + v1.y * v1.y);
+        float len2 = sqrt(v2.x * v2.x + v2.y * v2.y);
+        
+        if(len1 == 0 || len2 == 0) {
+            // Avoid division by zero. You can decide how to handle this case.
+            return 0;
+        }
+    
+        float angle = acos(dot / (len1 * len2));
+        return angle;
+    }
+
+    bool ray_intersects_segment(const Node &point, const Segment &seg) {
+        float x = point.pos.x, y = point.pos.y;
+        float x1 = seg.tab[0].pos.x, y1 = seg.tab[0].pos.y;
+        float x2 = seg.tab[1].pos.x, y2 = seg.tab[1].pos.y;
+    
+        // Check if the segment straddles the horizontal line at y
+        if ((y1 > y) != (y2 > y)) {
+            float intersectX = x1 + (y - y1) * (x2 - x1) / (y2 - y1);
+            return x < intersectX;
+        }
+        return false;
+    }
+    
+    bool is_node_inside(Vertex vert, Node node) {
+        if (vert.edges.size() == 3 && vert.vertices.size() == 3) {
+            return is_node_inside_trian(vert, node);
+        } else {
+            int intersections = 0;
+            for (const Segment &seg : vert.edges) {
+                if (ray_intersects_segment(node, seg)) {
+                    ++intersections;
+                }
+            }
+            if(intersections%2 == 0){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+    }
+
+    bool is_node_inside_trian(Vertex vert, Node node){
+        Node a = vert.vertices[0];
+        Node b = vert.vertices[1];
+        Node c = vert.vertices[2];
+
+        Segment a_n(a, node);
+        Segment b_n(b, node);
+        Segment c_n(c, node);
+
+        float alfa = angle(a_n, b_n);
+        float beta = angle(b_n, c_n);
+        float sigma = angle(c_n, a_n);
+
+        float epsilon = 0.01f;
+
+        if(fabs(alfa+beta+sigma - 2 * PI) < epsilon){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

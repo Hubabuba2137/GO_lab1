@@ -10,46 +10,32 @@ int main () {
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "GO");
     SetTargetFPS(60);
-
-    go::Node a(400, 200);
-    go::Node b(600, 600);
-
-    go::Line line(a,b);
-
-    go::Node c(500, 700);
-    go::Node d(100, 500);
-
-    go::Segment seg(c,d);
-    std::cout<<go::is_on_right_of_line(c, line)<<"\n";
-    std::cout<<go::is_on_right_of_line(d, line)<<"\n";
-
-    go::Node e(300,400);
-    go::Node f = flip_node_around_line(e, line);
-    go::Node g = flip_node_around_segment(e, seg);
     
+    std::vector<go::Node> vert;
+    vert.push_back((Vector2){100,100});
+    vert.push_back((Vector2){100,150});
+    vert.push_back((Vector2){400,500});
+    vert.push_back((Vector2){600,200});
+    vert.push_back((Vector2){300,300});
 
-    go::Node center(150,150);
-    
-    float radius = 100;
-    go::Vertex circle = go::circle_create(center, radius, 5);
+    go::Vertex mesh(vert);
 
-    //seg.move((Vector2){200,0});
+    go::Node a(200,250);
+    go::Node b(500,450);
+    go::Node c(450, 300);
+
+    std::cout<<go::is_node_inside(mesh, a)<<"\n";
+    std::cout<<go::is_node_inside(mesh, b)<<"\n";
+    std::cout<<go::is_node_inside(mesh, c)<<"\n";
 
     while (WindowShouldClose() == false){
         
         BeginDrawing();
             ClearBackground(BLACK);
-            line.draw(SCREEN_WIDTH, true);
+            mesh.draw();
             a.draw();
             b.draw();
-            seg.draw();
-            e.draw();
-            f.draw();
-            g.draw();
-
-            DrawCircleLines(center.pos.x, center.pos.y, radius, BLUE);
-            circle.draw();
-
+            c.draw();
         EndDrawing();
     }
 
