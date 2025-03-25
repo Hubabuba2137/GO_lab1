@@ -16,4 +16,5 @@ namespace go{
     std::vector<go::Vertex> load_vertexes_from_file(std::vector<go::Node> &nodes, std::vector<std::string> &vertex_info);
 
     void create_nodes(int n, std::string filepath, std::string filename);
+    std::vector<go::Vertex> create_vertexes(int number_of_vert, int lower_nodes, int upper_nodes, std::vector<go::Node> nodes);
 }

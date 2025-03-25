@@ -109,20 +109,38 @@ namespace go{
             return;
         }
 
-        // Seed the random number generator
         std::srand(std::time(nullptr));
 
-        // Write the *NODES header
         file << "*NODES" << std::endl;
 
-        // Generate and write n nodes
         for (int i = 1; i <= n; ++i) {
-            int x = std::rand() % 801; // Random x coordinate (0-800)
-            int y = std::rand() % 801; // Random y coordinate (0-800)
+            int x = std::rand() % 801; 
+            int y = std::rand() % 801; 
             file << i << " " << x << " " << y << std::endl;
         }
 
         file.close();
         std::cout << "File created successfully: " << full_path << std::endl;
+    }
+
+    std::vector<go::Vertex> create_vertexes(int number_of_vert, int lower_nodes, int upper_nodes, std::vector<go::Node> nodes){
+        std::vector<go::Vertex> result;
+        std::vector<go::Node> result_nodes;
+        std::srand(std::time(nullptr));
+
+        for(int i=0; i<number_of_vert; i++){
+            int number_of_nodes = std::rand() % (upper_nodes-lower_nodes) + lower_nodes;
+            for(int j = 0; j<number_of_nodes; j++){
+                int x = std::rand() % 801; 
+                int y = std::rand() % 801;
+                Node temp(x, y);
+                result_nodes.push_back(temp);
+
+            }
+            go::Vertex res(result_nodes);
+            result.push_back(res);
+        }
+
+        return result;
     }
 }

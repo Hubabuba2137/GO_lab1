@@ -108,10 +108,11 @@ namespace go{
         int n = 0;
         std::vector<Vertex> triangulation = ear_cut_triangulation(shape);
 
-        float min_x = shape.get_bounds()[0];
-        float max_x = shape.get_bounds()[1];
-        float min_y = shape.get_bounds()[2];
-        float max_y = shape.get_bounds()[3];
+        std::vector<float> shape_bounds = shape.get_bounds();
+        float min_x = shape_bounds[0];
+        float max_x = shape_bounds[1];
+        float min_y = shape_bounds[2];
+        float max_y = shape_bounds[3];
 
         for (const Node &it : nodes) {
             if (it.pos.x < min_x || it.pos.x > max_x || it.pos.y < min_y || it.pos.y > max_y) {
@@ -131,7 +132,7 @@ namespace go{
 
                 if (is_node_inside_trian(trian, it)) {
                     is_inside = true;
-                    inside_nodes->push_back(it);
+                    //inside_nodes->push_back(it);
                     break;
                 }
             }

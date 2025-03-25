@@ -22,10 +22,6 @@ int main () {
     go::Vertex shape = go::circle_create(c, 100, 7);
     int n=0;
     
-    // Create a complex shape (polygon) from the nodes
-    go::Vertex complex_shape(shape);
-    
-    
     //------------------basic--------------------------
     
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
@@ -37,7 +33,7 @@ int main () {
 
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-    std::cout << "basic approach time = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[us]" << std::endl;
+    std::cout << "Basic approach time = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[us]" << std::endl;
     std::cout<<"Number of nodes inside shape = "<<n<<"\n";
     
     n=0;
@@ -61,6 +57,7 @@ int main () {
     std::chrono::steady_clock::time_point begin_3 = std::chrono::steady_clock::now();
 
     std::vector<go::Node> nodes_inside;
+
     n = go::calc_nodes_inside(nodes, shape, &nodes_inside);
 
     std::chrono::steady_clock::time_point end_3 = std::chrono::steady_clock::now();
@@ -69,7 +66,7 @@ int main () {
     std::cout<<"Number of nodes inside shape = "<<n<<"\n";
 
 
-    std::vector<go::Vertex> trian = go::ear_cut_triangulation(complex_shape);
+    std::vector<go::Vertex> trian = go::ear_cut_triangulation(shape);
 
     while (WindowShouldClose() == false){
         
@@ -82,7 +79,7 @@ int main () {
             for(auto that: trian){
                 that.draw();
             }
-            complex_shape.draw();
+            shape.draw();
         EndDrawing();
     }
 
