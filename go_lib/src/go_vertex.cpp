@@ -9,6 +9,7 @@
 #include "go_vertex.hpp"
 #include "go_node.hpp"
 #include "go_segment.hpp"
+#include "go_lib.hpp"
 
 namespace go{
     Vertex::Vertex(std::vector<Node> nodes) {
@@ -48,6 +49,11 @@ namespace go{
         }
     
         this->edges = temp;
+    }
+    void Vertex::draw_nodes(){
+        for(long long unsigned int i =0; i<vertices.size();i++){
+            vertices[i].draw();
+        }
     }
     
     void Vertex::draw(){
@@ -92,5 +98,46 @@ namespace go{
     
         return {min_x, max_x, min_y, max_y};
     }
-    
+
+    //-----------------lab4------------------
+
+    void Vertex::set_convex_shape(){
+       this->convex_hull_shape = convex_hull(this->vertices);
+    }
+
+    void Vertex::draw_convex_hull(){
+        set_convex_shape();
+        Vertex temp(this->convex_hull_shape);
+        temp.draw();
+    }
+
+    void Vertex::move(int dx, int dy){
+        for(auto& it: this->vertices){
+            it.pos.x += dx;
+            it.pos.y += dy;
+        }
+
+        create_edges();
+        set_convex_shape();
+    }
+
+    void Vertex::set_pos(int x, int y){
+        if(this->vertices.empty()){
+            return;
+        }
+        
+        float centroidX = 0.0f, centroidY = 0.0f;
+        for (const auto& node : this->vertices) {
+            centroidX += node.pos.x;
+            centroidY += node.pos.y;
+        }
+        centroidX /= this->vertices.size();
+        centroidY /= this->vertices.size();
+
+        int dx = x - static_cast<int>(centroidX);
+        int dy = y - static_cast<int>(centroidY);
+
+        move(dx, dy);
+    }
+
 }//namespace go

@@ -143,4 +143,48 @@ namespace go{
 
         return result;
     }
+
+    void prep_file(std::string filepath, std::string filename, std::string newfile){
+        std::string full_path = filepath + "\\" + filename;
+
+        std::fstream plik;
+        plik.open(full_path);
+
+        if(!plik.good()){
+            std::cout<<"Couldn't read a file"<<std::endl;
+        }
+
+        std::vector<Node> nodes;
+        std::string temp_line;
+        
+        while(getline(plik, temp_line)){
+            std::istringstream iss(temp_line);
+            std::string temp_x, temp_y;
+            iss >> temp_x >> temp_y;
+
+            float x = atoi(temp_x.c_str())*2;
+            float y = atoi(temp_y.c_str())*2;
+
+            Node temp_node((Vector2){x,y});
+            nodes.push_back(temp_node);
+        }
+
+        std::string new_full_path = filepath + "\\" + newfile;
+
+        std::ofstream file(new_full_path);
+
+        if (!file.is_open()) {
+            std::cout << "Failed to create the file: " << new_full_path << std::endl;
+            return;
+        }
+
+        int n = nodes.size();
+        file << "*NODES" << std::endl;
+        for (int i = 1; i <= n; ++i) {
+            file << i <<" " << nodes[i].pos.x<<" " << nodes[i].pos.y<<std::endl;
+        }
+
+        file.close();
+        
+    }
 }

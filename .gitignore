@@ -1,4 +1,5 @@
 *.exe
 *.dsym
 main
-test.txt
+*.txt
+
