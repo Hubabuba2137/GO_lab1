@@ -19,8 +19,11 @@ namespace go{
 
     Node flip_node_around_line(Node node, Line line);
     Node flip_node_around_segment(Node node, Segment seg);
+    
     float angle(const Segment &seg1, const Segment &seg2);
     bool is_node_inside(Vertex vert, Node node);
     bool is_node_inside_trian(Vertex vert, Node node);
     bool ray_intersects_segment(Node point, Segment seg);
+
+    std::vector<Node> convex_hull(std::vector<Node> &nod);
 }

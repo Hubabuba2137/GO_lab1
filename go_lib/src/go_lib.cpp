@@ -91,8 +91,8 @@ namespace go{
     
         return flip_node_around_line(node, temp);
     }
+    
     float angle(const Segment &seg1, const Segment &seg2) {
-        // Calculate direction vectors assuming `start` and `end` members in Segment.
         Vector2 v1 = { seg1.tab[1].pos.x - seg1.tab[0].pos.x, seg1.tab[1].pos.y - seg1.tab[0].pos.y };
         Vector2 v2 = { seg2.tab[1].pos.x - seg2.tab[0].pos.x, seg2.tab[1].pos.y - seg2.tab[0].pos.y };
     
@@ -101,7 +101,6 @@ namespace go{
         float len2 = sqrt(v2.x * v2.x + v2.y * v2.y);
         
         if(len1 == 0 || len2 == 0) {
-            // Avoid division by zero. You can decide how to handle this case.
             return 0;
         }
     
@@ -114,11 +113,63 @@ namespace go{
         float x1 = seg.tab[0].pos.x, y1 = seg.tab[0].pos.y;
         float x2 = seg.tab[1].pos.x, y2 = seg.tab[1].pos.y;
     
-        // Check if the segment straddles the horizontal line at y
         if ((y1 > y) != (y2 > y)) {
             float intersectX = x1 + (y - y1) * (x2 - x1) / (y2 - y1);
             return x < intersectX;
         }
         return false;
+    }
+
+    //-------------lab4---------------------
+
+    std::vector<Node> convex_hull(std::vector<Node> &nod){
+        std::vector<go::Node> nodes = nod;
+        std::vector<go::Node> hull;
+    
+        if(nodes.size() < 3 ){
+            std::cout<<"Convec hull not possible"<<"\n";
+            return hull;
+        }
+    
+        int leftmost = 0;
+        int n = nodes.size();
+    
+        for(int i = 1; i < n; i++){
+            if(nodes[i].pos.x < nodes[leftmost].pos.x){
+                leftmost = i;
+            }
+        }
+        
+        int p = leftmost;
+        int q;
+        
+        do {
+            hull.push_back(nodes[p]);
+            q = (p + 1) % n;
+            
+            for(int i = 0; i < n; i++){
+                auto orientation = [](go::Node &p, go::Node &q, go::Node &r)-> int{
+                    float val = (q.pos.y - p.pos.y) * (r.pos.x - q.pos.x) -
+                                (q.pos.x - p.pos.x) * (r.pos.y - q.pos.y);
+    
+                    if(val == 0.0f){
+                        return 0;
+                    }
+                    else if(val > 0.0f){
+                        return 1;
+                    }
+                    else{
+                        return 2;
+                    }
+                };
+                
+                if(orientation(nodes[p], nodes[i], nodes[q]) == 2){
+                    q = i;
+                }
+            }
+            p = q;
+        } while(p != leftmost);
+        
+        return hull;
     }
 }

@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -11,7 +12,6 @@
 
 namespace go{
     Vertex::Vertex(std::vector<Node> nodes) {
-        // Calculate the centroid of the nodes
         float centroidX = 0.0f, centroidY = 0.0f;
         for (const auto& node : nodes) {
             centroidX += node.pos.x;
@@ -20,7 +20,6 @@ namespace go{
         centroidX /= nodes.size();
         centroidY /= nodes.size();
 
-        // Sort nodes based on their polar angle relative to the centroid
         std::sort(nodes.begin(), nodes.end(), [centroidX, centroidY](const Node& a, const Node& b) {
             float angleA = atan2(a.pos.y - centroidY, a.pos.x - centroidX);
             float angleB = atan2(b.pos.y - centroidY, b.pos.x - centroidX);
@@ -36,7 +35,7 @@ namespace go{
         std::vector<Node> vert = this->vertices;
     
         
-        for(int i=0; i<vertices.size();i++){
+        for(long long unsigned int i=0; i<vertices.size();i++){
     
             if(i<vertices.size()-1){
                 Segment temp_line(vert[i], vert[i+1]);
@@ -52,11 +51,11 @@ namespace go{
     }
     
     void Vertex::draw(){
-        for(int i =0; i<edges.size();i++){
+        for(long long unsigned int i =0; i<edges.size();i++){
             edges[i].draw();
         }
     
-        for(int i =0; i<vertices.size();i++){
+        for(long long unsigned int i =0; i<vertices.size();i++){
             vertices[i].draw();
         }
     }
@@ -65,6 +64,8 @@ namespace go{
         vertices.push_back(node);
         create_edges();
     }
+
+    //------------------Lab 3 -----------------//
 
     float Vertex::area(){
         if(this->edges.size() == 3 && this->edges.size()==3){
@@ -92,4 +93,4 @@ namespace go{
         return {min_x, max_x, min_y, max_y};
     }
     
-}
+}//namespace go

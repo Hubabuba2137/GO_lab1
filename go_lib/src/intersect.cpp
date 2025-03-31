@@ -8,7 +8,8 @@ namespace go{
     bool is_node_inside(Vertex vert, Node node) {
         if (vert.edges.size() == 3 && vert.vertices.size() == 3) {
             return is_node_inside_trian(vert, node);
-        } else {
+        } 
+        else {
             int intersections = 0;
             for (const Segment &seg : vert.edges) {
                 if (ray_intersects_segment(node, seg)) {
@@ -52,16 +53,19 @@ namespace go{
         int prev = (i - 1 + poly.size()) % poly.size();
         int next = (i + 1) % poly.size();
 
-        if (!is_convex(poly[prev].pos, poly[i].pos, poly[next].pos))
+        if (!is_convex(poly[prev].pos, poly[i].pos, poly[next].pos)){
             return false;
+        }
 
         Vertex triangle({ poly[prev], poly[i], poly[next] });
 
         for (int j = 0; j < poly.size(); ++j) {
-            if (j == prev || j == i || j == next)
+            if (j == prev || j == i || j == next){
                 continue;
-            if (is_node_inside_trian(triangle, poly[j]))
+            }
+            if (is_node_inside_trian(triangle, poly[j])){
                 return false;
+            }
         }
 
         return true;
@@ -145,3 +149,53 @@ namespace go{
         return n;
     }
 }
+
+//--------------------porównanie metod triangulacji-------------------//
+/*
+void basic(std::vector<go::Node> &nodes, go::Vertex shape){
+    int n=0;
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    for(go::Node it: nodes){
+        if(go::is_node_inside(shape, it)){
+            ++n;
+        }
+    }
+
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+    std::cout << "Basic approach time = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[us]" << std::endl;
+    std::cout<<"Number of nodes inside shape = "<<n<<"\n";
+}
+
+void improved(std::vector<go::Node> &nodes, go::Vertex shape){
+    int n=0;
+    std::chrono::steady_clock::time_point begin_2 = std::chrono::steady_clock::now();
+    std::vector<float> bounds = shape.get_bounds(); //min_x, max_x, min_y, max_y
+
+    for(go::Node it: nodes){
+        if(it.pos.x >= bounds[0] || it.pos.y <= bounds[1], it.pos.y >= bounds[2], it.pos.y <= bounds[3]){
+            if(go::is_node_inside(shape, it)){
+                ++n;
+            }
+        }
+    }
+    std::chrono::steady_clock::time_point end_2 = std::chrono::steady_clock::now();
+
+    std::cout << "Improved basic approach time = " << std::chrono::duration_cast<std::chrono::microseconds>(end_2 - begin_2).count() << "[us]" << std::endl;
+    std::cout<<"Number of nodes inside shape = "<<n<<"\n";
+}
+
+void triangulation(std::vector<go::Node> &nodes, go::Vertex shape){
+    int n=0;
+    std::chrono::steady_clock::time_point begin_3 = std::chrono::steady_clock::now();
+
+    std::vector<go::Node> nodes_inside;
+
+    n = go::calc_nodes_inside(nodes, shape, &nodes_inside);
+
+    std::chrono::steady_clock::time_point end_3 = std::chrono::steady_clock::now();
+
+    std::cout << "Triangulation approach time = " << std::chrono::duration_cast<std::chrono::microseconds>(end_3 - begin_3).count() << "[us]" << std::endl;
+    std::cout<<"Number of nodes inside shape = "<<n<<"\n";
+}
+*/

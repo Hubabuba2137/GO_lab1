@@ -86,7 +86,7 @@ namespace go{
                     node_ids.push_back(id_temp);
                 }
 
-                for(int i = 0; i < node_ids.size(); i++){
+                for(long long unsigned int i = 0; i < node_ids.size(); i++){
                     temp_nodes.push_back(nodes[node_ids[i]-1]);
                     
                     //cout<<"\t"<<node_ids[i]<<": x="<<nodes[node_ids[i]-1].pos.x;
@@ -114,8 +114,8 @@ namespace go{
         file << "*NODES" << std::endl;
 
         for (int i = 1; i <= n; ++i) {
-            int x = std::rand() % 801; 
-            int y = std::rand() % 801; 
+            int x = std::rand() % (701-100) + 100; 
+            int y = std::rand() % (701-100) + 100; 
             file << i << " " << x << " " << y << std::endl;
         }
 
