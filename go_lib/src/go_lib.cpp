@@ -148,22 +148,12 @@ namespace go{
             q = (p + 1) % n;
             
             for(int i = 0; i < n; i++){
-                auto orientation = [](go::Node &p, go::Node &q, go::Node &r)-> int{
-                    float val = (q.pos.y - p.pos.y) * (r.pos.x - q.pos.x) -
-                                (q.pos.x - p.pos.x) * (r.pos.y - q.pos.y);
-    
-                    if(val == 0.0f){
-                        return 0;
-                    }
-                    else if(val > 0.0f){
-                        return 1;
-                    }
-                    else{
-                        return 2;
-                    }
-                };
+
+                float val = (nodes[q].pos.y - nodes[p].pos.y) * (nodes[i].pos.x - nodes[q].pos.x) -
+                            (nodes[q].pos.x - nodes[p].pos.x) * (nodes[i].pos.y - nodes[q].pos.y);
+
                 
-                if(orientation(nodes[p], nodes[i], nodes[q]) == 2){
+                if(val < 0){
                     q = i;
                 }
             }

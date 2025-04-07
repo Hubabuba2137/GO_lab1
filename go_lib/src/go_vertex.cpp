@@ -127,7 +127,7 @@ namespace go{
         }
         
         float centroidX = 0.0f, centroidY = 0.0f;
-        for (const auto& node : this->vertices) {
+        for (auto node : this->vertices) {
             centroidX += node.pos.x;
             centroidY += node.pos.y;
         }
