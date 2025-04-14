@@ -6,13 +6,23 @@
 
 #include "go_node.hpp"
 #include "go_segment.hpp"
+#include "go_line.hpp"
 
 namespace go{
     Segment::Segment(Node node_start, Node node_end){
         tab[0] = node_start;
         tab[1] = node_end;
     }
-    
+
+    bool Segment::solve_seg(float x, float y)
+    {
+        Node point_a(Vector2{this->tab[0].pos.x, this->tab[0].pos.y});
+        Node point_b(Vector2{this->tab[1].pos.x, this->tab[1].pos.y});
+        Line temp(point_a, point_b);
+
+        return temp.solve_equation(x, y);
+    }
+
     void Segment::draw(){
         DrawLine(tab[0].pos.x, tab[0].pos.y, tab[1].pos.x, tab[1].pos.y, WHITE);
         tab[0].draw();

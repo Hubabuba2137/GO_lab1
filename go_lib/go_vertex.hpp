@@ -25,5 +25,7 @@ namespace go{
         void draw_convex_hull();
         void move(int dx, int dy);
         void set_pos(int x, int y);
+
+        std::vector<Node> gen_bp(int n);
     };
 }

@@ -140,4 +140,45 @@ namespace go{
         move(dx, dy);
     }
 
+
+
+    std::vector<Node> Vertex::gen_bp(int n){
+        std::vector<Node> points;
+        if (vertices.empty() || n <= 0) {
+            return vertices;
+        }
+
+    
+        float perimeter = 0.0f;
+        for(auto& edge : this->edges){
+            perimeter += edge.len();
+        }
+        //std::cout << perimeter << "\n";
+
+        float spacing = perimeter / n;
+
+        for(auto& edge : this->edges) {
+            Node point_a = edge.tab[0];
+            Node point_b = edge.tab[1];
+            points.push_back(point_a);
+
+            float seg_length = edge.len();
+            int num_points = static_cast<int>(seg_length / spacing);
+
+            for (int i = 1; i < num_points; i++){
+                float t = static_cast<float>(i) / num_points;
+                float x = point_a.pos.x + t * (point_b.pos.x - point_a.pos.x);
+                float y = point_a.pos.y + t * (point_b.pos.y - point_a.pos.y);
+                points.push_back(Node(Vector2{ x, y }));
+            }
+        }
+
+        if(points.empty() || points.back().pos.x != vertices.front().pos.x ||
+           points.back().pos.y != vertices.front().pos.y){
+               points.push_back(vertices.front());
+        }
+
+        return points;
+    }
+
 }//namespace go
