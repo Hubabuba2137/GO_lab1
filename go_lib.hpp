@@ -6,10 +6,12 @@
 #include "go_lib/go_line.hpp"
 #include "go_lib/go_segment.hpp"
 #include "go_lib/go_vertex.hpp"
+#include "go_lib/go_triangle.hpp"
 
 #include "go_lib/file_reading.hpp"
 #include "go_lib/circle_aproxiamtion.hpp"
 #include "go_lib/intersect.hpp"
+
 
 namespace go{
     bool is_on_segment(Node node, Segment seg);

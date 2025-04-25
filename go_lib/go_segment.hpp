@@ -9,6 +9,7 @@ namespace go{
         Node tab[2];
     
         Segment(Node node_start, Node node_end);
+        Segment();
         bool solve_seg(float x, float y);
         void draw();
     

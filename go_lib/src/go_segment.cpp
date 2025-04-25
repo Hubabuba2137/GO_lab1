@@ -14,6 +14,8 @@ namespace go{
         tab[1] = node_end;
     }
 
+    Segment::Segment(){}
+
     bool Segment::solve_seg(float x, float y)
     {
         Node point_a(Vector2{this->tab[0].pos.x, this->tab[0].pos.y});

@@ -25,6 +25,21 @@ namespace go{
         }
     }
 
+    bool is_inside_polygon(go::Node &point, std::vector<go::Node> &polygon) {
+        bool inside = false;
+        int n = polygon.size();
+        for (int i = 0; i < n; i++){
+            int j = (i + 1) % n;
+            if (((polygon[i].pos.y > point.pos.y) != (polygon[j].pos.y > point.pos.y)) &&
+                (point.pos.x < (polygon[j].pos.x - polygon[i].pos.x) *
+                (point.pos.y - polygon[i].pos.y) / (polygon[j].pos.y - polygon[i].pos.y) + polygon[i].pos.x)){
+                    inside = !inside;
+            }
+        }
+        return inside;
+    }
+    
+
     bool is_node_inside_trian(Vertex vert, Node node) {
         Node a = vert.vertices[0];
         Node b = vert.vertices[1];
