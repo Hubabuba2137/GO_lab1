@@ -72,12 +72,15 @@ std::vector<go::Triangle> advancing_front(std::vector<go::Node>& polyNodes){
     std::vector<go::Triangle> triangles;
     std::vector<go::Segment> front;
     std::vector<go::Node> nodes = polyNodes;
+
+    //creating front
     for(int i=0; i<nodes.size(); i++){
         front.push_back(go::Segment(nodes[i], nodes[(i+1)%nodes.size()]));
     }
     
 
     for(int i = 0; i < front.size(); i++){
+        std::cout<<"Front size = "<< front.size()<<"\n";
         std::vector<go::Node> cnd = create_candidates(front[i].tab[0], front[i].tab[1]);
         bool selected = false;
         go::Node A = front[i].tab[0];
@@ -88,8 +91,18 @@ std::vector<go::Triangle> advancing_front(std::vector<go::Node>& polyNodes){
         for (auto &candidate : cnd) {
             if (isValidTriangle(A, B, candidate, polyNodes)) {
                 float cross = edge_dx * (candidate.pos.y - A.pos.y) - edge_dy * (candidate.pos.x - A.pos.x);
+
                 if (cross > 0) {
                     triangles.push_back(go::Triangle(A, B, candidate));
+
+                    go::Segment edge_1(A,candidate);
+                    go::Segment edge_2(B,candidate);
+
+                    //front.erase(front.begin()+i);
+
+                    //front.push_back(edge_1);
+                    //front.push_back(edge_2);
+
                     selected = true;
                     break;
                 }
@@ -97,11 +110,18 @@ std::vector<go::Triangle> advancing_front(std::vector<go::Node>& polyNodes){
             else{
                 go::Node C = front[(i+1)%front.size()].tab[1];
                 triangles.push_back(go::Triangle(A, B, C));
+
+                //front.push_back(go::Segment(A,C));
+
+                //front.erase(front.begin()+i);
+                //front.erase(front.begin()+i+1);
+
                 selected = true;
                 break;
                 
             }
         }
+        
         
         if (!selected) {
             for (auto &candidate : cnd) {
