@@ -10,6 +10,7 @@
 #include "go_node.hpp"
 #include "go_segment.hpp"
 #include "go_lib.hpp"
+#include "go_triangle.hpp"
 
 namespace go{
     Triangle::Triangle(Node a, Node b, Node c){
@@ -22,7 +23,11 @@ namespace go{
         edges[2] = Segment(a,c);
     }
 
-    void Triangle::draw(){
+    Triangle::Triangle()
+    {
+    }
+    void Triangle::draw()
+    {
         for(Segment it: edges){
             it.draw();
         }

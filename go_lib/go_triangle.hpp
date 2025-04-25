@@ -11,6 +11,7 @@ namespace go{
         Segment edges[3];
 
         Triangle(Node a, Node b, Node c);
+        Triangle();
 
         void draw();
     };
