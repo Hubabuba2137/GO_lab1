@@ -75,8 +75,8 @@ std::vector<go::Triangle> advancing_front(std::vector<go::Node>& polyNodes){
     for(int i = 0; i < temp_nodes.size(); i++){
         std::vector<go::Node> cnd = create_candidates(temp_nodes[i], temp_nodes[(i + 1) % temp_nodes.size()]);
         bool selected = false;
-        auto &A = temp_nodes[i];
-        auto &B = temp_nodes[(i + 1) % temp_nodes.size()];
+        go::Node A = temp_nodes[i];
+        go::Node B = temp_nodes[(i + 1) % temp_nodes.size()];
         float edge_dx = B.pos.x - A.pos.x;
         float edge_dy = B.pos.y - A.pos.y;
 
@@ -90,9 +90,11 @@ std::vector<go::Triangle> advancing_front(std::vector<go::Node>& polyNodes){
                 }
             }
             else{
-                triangles.push_back(go::Triangle(A, B, temp_nodes[(i + 2) % temp_nodes.size()]));
+                go::Node C = temp_nodes[(i + 2) % temp_nodes.size()];
+                triangles.push_back(go::Triangle(A, B, C));
                 selected = true;
                 break;
+                
             }
         }
         
