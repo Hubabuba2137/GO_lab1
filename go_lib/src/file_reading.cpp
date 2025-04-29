@@ -114,8 +114,8 @@ namespace go{
         file << "*NODES" << std::endl;
 
         for (int i = 1; i <= n; ++i) {
-            int x = std::rand() % (701-100) + 100; 
-            int y = std::rand() % (701-100) + 100; 
+            int x = std::rand() % (751-100) + 50; 
+            int y = std::rand() % (751-100) + 50; 
             file << i << " " << x << " " << y << std::endl;
         }
 

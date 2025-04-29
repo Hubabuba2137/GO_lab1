@@ -1,184 +1,215 @@
 #include <raylib.h>
 #include <vector>
 #include <iostream>
-#include <algorithm>
 
 #include "go_lib.hpp"
 
-const int SCREEN_WIDTH = 600;
-const int SCREEN_HEIGHT = 600;
+#include <map>
+#include <algorithm>
 
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 800;
 
-float deg_to_rad(float angle){
-    return (angle*2*3.1415) / 360;
+float dist(go::Node A, go::Node B){
+    return sqrt(pow(A.pos.x - B.pos.x,2)+ pow(A.pos.y - B.pos.y,2));
 }
 
-float dist(go::Node a, go::Node b){
-    return sqrt(pow(a.pos.x-b.pos.x,2)+pow(a.pos.y-b.pos.y,2));
-}
-
-std::vector<go::Node> create_candidates(go::Node node_1, go::Node node_2) {
-    std::vector<go::Node> nodes;
-    
-    float mid_x = (node_1.pos.x + node_2.pos.x) / 2.0f;
-    float mid_y = (node_1.pos.y + node_2.pos.y) / 2.0f;
-    
-    float dx = node_2.pos.x - node_1.pos.x;
-    float dy = node_2.pos.y - node_1.pos.y;
-    float base_length = sqrt(dx * dx + dy * dy);
-    
-    float h = (sqrt(3.0f) / 2.0f) * base_length;
-    
-    float ux = (dy / base_length)/1.5;
-    float uy = (dx / base_length)/1.5;
-    
-    go::Node candidate1(mid_x + ux * h, mid_y + uy * h);
-    go::Node candidate2(mid_x - ux * h, mid_y - uy * h);
-    
-    float cross = dx * (candidate1.pos.y - node_1.pos.y) - dy * (candidate1.pos.x - node_1.pos.x);
-    if (cross < 0) {
-        nodes.push_back(candidate2); 
-    } else {
-        nodes.push_back(candidate1);
+int min_x(std::vector<go::Node> &nodes){
+    int min = nodes[0].pos.x;
+    for(auto& it: nodes){
+        if(it.pos.x < min){
+            min = it.pos.x;
+        }
     }
-    
-    return nodes;
+    return min;
 }
 
-bool isValidTriangle(go::Node a, go::Node b, go::Node c, std::vector<go::Node>& polyNodes){
-    float eps = dist(a, b)/2;
-    
-    if(dist(a, c) - dist(b, c) >= eps){
+int min_y(std::vector<go::Node> &nodes){
+    int min = nodes[0].pos.y;
+    for(auto& it: nodes){
+        if(it.pos.y < min){
+            min = it.pos.y;
+        }
+    }
+    return min;
+}
+
+int max_x(std::vector<go::Node> &nodes){
+    int max = nodes[0].pos.x;
+    for(auto& it: nodes){
+        if(it.pos.x >= max){
+            max = it.pos.x;
+        }
+    }
+    return max;
+}
+
+int max_y(std::vector<go::Node> &nodes){
+    int max = nodes[0].pos.y;
+    for(auto& it: nodes){
+        if(it.pos.y >= max){
+            max = it.pos.y;
+        }
+    }
+    return max;
+}
+
+go::Triangle super_triangle(std::vector<go::Node> &nodes){
+
+    int x_min = min_x(nodes);
+    int y_min = min_y(nodes);
+
+    int x_max = max_x(nodes);
+    int y_max = max_y(nodes);
+
+
+    int x_a, y_a, x_b, y_b, x_c, y_c;
+
+    x_a = x_min - 20;
+    y_a = y_min - 20;
+
+    x_b = (-y_min + y_max + x_max )+ 100;
+    y_b = y_a;
+
+    x_c = x_a;
+    y_c = -x_min + y_max + x_max + 50;
+
+    return go::Triangle(go::Node(x_a, y_a),go::Node(x_b, y_b), go::Node(x_c, y_c)); 
+}
+
+bool is_inside_circumcircle(go::Triangle trian, go::Node point){
+    //tworzymy okrąg opisany na trójkącie
+    float x1 = trian.points[0].pos.x;
+    float y1 = trian.points[0].pos.y;
+
+    float x2 = trian.points[1].pos.x;
+    float y2 = trian.points[1].pos.y;
+
+    float x3 = trian.points[2].pos.x;
+    float y3 = trian.points[2].pos.y;
+
+    float D = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
+
+    float Ux = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / D;
+    float Uy = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1)) / D;
+
+    float R = sqrt((Ux - x1) * (Ux - x1) + (Uy - y1) * (Uy - y1));
+
+    go::Node center(Ux, Uy);
+
+    //i sprawdzamy czy punkt jest wewnątrz niego
+    if(dist(center, point) < R){
+        return true;
+    }
+    else{
         return false;
     }
-    
-    float minDistance = dist(a, b)/1.5;
-
-    for(auto &node : polyNodes){
-        if((node.pos.x == a.pos.x && node.pos.y == a.pos.y) || (node.pos.x == b.pos.x && node.pos.y == b.pos.y))
-        {
-            continue;
-        }
-        if(dist(node, c) < minDistance){
-            return false;
-        }
-    }
-    
-    return true;
 }
 
-
-std::vector<go::Triangle> advancing_front(std::vector<go::Node>& polyNodes){
-    std::vector<go::Triangle> triangles;
-    std::vector<go::Segment> front;
-    std::vector<go::Node> nodes = polyNodes;
-
-    //creating front
-    for(int i=0; i<nodes.size(); i++){
-        front.push_back(go::Segment(nodes[i], nodes[(i+1)%nodes.size()]));
-    }
-    
-
-    for(int i = 0; i < front.size(); i++){
-        std::cout<<"Front size = "<< front.size()<<"\n";
-        std::vector<go::Node> cnd = create_candidates(front[i].tab[0], front[i].tab[1]);
-        bool selected = false;
-        go::Node A = front[i].tab[0];
-        go::Node B = front[i].tab[1];
-        float edge_dx = B.pos.x - A.pos.x;
-        float edge_dy = B.pos.y - A.pos.y;
-
-        for (auto &candidate : cnd) {
-            if (isValidTriangle(A, B, candidate, polyNodes)) {
-                float cross = edge_dx * (candidate.pos.y - A.pos.y) - edge_dy * (candidate.pos.x - A.pos.x);
-
-                if (cross > 0) {
-                    triangles.push_back(go::Triangle(A, B, candidate));
-
-                    go::Segment edge_1(A,candidate);
-                    go::Segment edge_2(B,candidate);
-
-                    //front.erase(front.begin()+i);
-
-                    //front.push_back(edge_1);
-                    //front.push_back(edge_2);
-
-                    selected = true;
-                    break;
-                }
-            }
-            else{
-                go::Node C = front[(i+1)%front.size()].tab[1];
-                triangles.push_back(go::Triangle(A, B, C));
-
-                //front.push_back(go::Segment(A,C));
-
-                //front.erase(front.begin()+i);
-                //front.erase(front.begin()+i+1);
-
-                selected = true;
-                break;
-                
-            }
-        }
-        
-        
-        if (!selected) {
-            for (auto &candidate : cnd) {
-                if (isValidTriangle(A, B, candidate, polyNodes)) {
-                    triangles.push_back(go::Triangle(A, B, candidate));
-                    break;
-                }
-            }
+int find_triangle(const std::vector<go::Triangle>& triangulation, const go::Triangle& tri) {
+    for (size_t i = 0; i < triangulation.size(); ++i) {
+        if (triangulation[i] == tri) {
+            return i;
         }
     }
+    return -1;
+}
 
-    return triangles;
+std::vector<go::Triangle> bowyer_watson(std::vector<go::Node> &nodes){
+    std::vector<go::Triangle> triangulation;
+
+    //dodajemy super trójkąt    
+    go::Triangle super = super_triangle(nodes);
+    triangulation.push_back(super);
+
+    for(auto& point:nodes){
+
+        //znajdujemt trójkąty, których okrąg opisany zawiera nowy punkt
+        std::vector<go::Triangle> bad_trian;
+        for(auto& triangle: triangulation){
+            if(is_inside_circumcircle(triangle, point)){
+                bad_trian.push_back(triangle);
+            }
+        }
+
+        //znajdujemy krawędzie graniczne
+        std::vector<go::Segment> polygon;
+        std::map<go::Segment, int> edgeCount;
+
+        for(auto& bad_tr: bad_trian){
+            std::vector<go::Segment> edges = {bad_tr.edges[0], bad_tr.edges[1], bad_tr.edges[2]};
+
+            for(auto& e: edges){
+                edgeCount[e]++;
+            }
+        }
+
+        for (auto& kv : edgeCount) {
+            if (kv.second == 1) {
+                polygon.push_back(kv.first);
+            }
+        }
+
+        //usuwamy złe trójkąty
+        std::vector<int> indicesToRemove;
+		indicesToRemove.reserve(bad_trian.size());
+
+		for (auto& tri : bad_trian) {
+			int idx = find_triangle(triangulation, tri);
+			if (idx != -1) {
+				indicesToRemove.push_back(idx);
+			}
+		}
+		std::sort(indicesToRemove.begin(), indicesToRemove.end(), std::greater<int>());
+
+		for (int idx : indicesToRemove) {
+			if (idx >= 0 && idx < (int)triangulation.size()) {
+				triangulation.erase(triangulation.begin() + idx);
+			}
+		}
+
+        //tworzymy nowe trójkąty
+        for(auto& edge: polygon){
+            triangulation.push_back(go::Triangle(edge.tab[0], edge.tab[1], point));
+        }
+
+    }
+    std::vector<go::Triangle> result;
+
+    for (auto& tri : triangulation) {
+        if (tri.points[0] != super.points[0] && tri.points[0] != super.points[1] && tri.points[0] != super.points[2] &&
+            tri.points[1] != super.points[0] && tri.points[1] != super.points[1] && tri.points[1] != super.points[2] &&
+            tri.points[2] != super.points[0] && tri.points[2] != super.points[1] && tri.points[2] != super.points[2]) {
+            result.push_back(tri);
+        }
+    }
+
+    return result;
 }
 
 int main () {
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "GO");
     SetTargetFPS(60);
-    std::vector<go::Node> nodes;
-    nodes.push_back(go::Node(100, 100));
-    nodes.push_back(go::Node(150, 100));
-    nodes.push_back(go::Node(200, 100));
-    nodes.push_back(go::Node(250, 100));
-    nodes.push_back(go::Node(300, 100));
-    nodes.push_back(go::Node(350, 100));
-    nodes.push_back(go::Node(400, 100));
 
-    nodes.push_back(go::Node(400, 150));
-    nodes.push_back(go::Node(400, 200));
-    nodes.push_back(go::Node(400, 250));
-    nodes.push_back(go::Node(400, 300));
-    nodes.push_back(go::Node(400, 350));
-    nodes.push_back(go::Node(400, 400));
+    go::create_nodes(100, "D:/Code/Uczelnia/S4/GO/GO_lab01/", "test.txt");
+    std::vector<go::Node> nodes = go::read_nodes("test.txt");
 
-    nodes.push_back(go::Node(350, 400));
-    nodes.push_back(go::Node(300, 400));
-    nodes.push_back(go::Node(250, 400));
-    nodes.push_back(go::Node(200, 400));
-    nodes.push_back(go::Node(150, 400));
-    nodes.push_back(go::Node(100, 400));
+    //go::Triangle super = super_triangle(nodes);
 
-    nodes.push_back(go::Node(100, 350));
-    nodes.push_back(go::Node(100, 300));
-    nodes.push_back(go::Node(100, 250));
-    nodes.push_back(go::Node(100, 200));
-    nodes.push_back(go::Node(100, 150));
-
-    go::Vertex vert(nodes);
-    auto triangles = advancing_front(nodes);
+    std::vector<go::Triangle> triangulation = bowyer_watson(nodes);
 
     while (WindowShouldClose() == false){
 
         BeginDrawing();
             ClearBackground(BLACK);
-            vert.draw();
+            //super.draw();
+
+            for(auto& it: nodes){
+                it.draw();
+            }
             
-            for(auto it: triangles){
+            for(auto& it: triangulation){
                 it.draw();
             }
 
